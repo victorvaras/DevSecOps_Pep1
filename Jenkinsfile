@@ -52,10 +52,37 @@ pipeline {
             steps {
                 script {
                     echo "Deploying Backend Container..."
-                    bat "docker run -d --name backend-container -e DB_HOST= -p 8090:8090 victorvaraspro/tingeso-backend:latest"
+
+                    // Verificar si el contenedor backend-container ya existe
+                    def backendExists = bat(script: "docker ps -a -q -f name=backend-container", returnStdout: true).trim()
+                    if (backendExists) {
+                        echo "Stopping and removing existing backend-container..."
+                        bat "docker stop backend-container || true"
+                        bat "docker rm backend-container || true"
+                    }
+
+                    // Ejecutar el contenedor del backend con variables de entorno
+                    bat """
+                        docker run -d --name backend-container \
+                        -e DB_HOST=10.0.119.31 \
+                        -p 8090:8090 victorvaraspro/tingeso-backend:latest
+                    """
 
                     echo "Deploying Frontend Container..."
-                    bat "docker run -d --name frontend-container -p 5173:80 victorvaraspro/tingeso-frontend:latest"
+
+                    // Verificar si el contenedor frontend-container ya existe
+                    def frontendExists = bat(script: "docker ps -a -q -f name=frontend-container", returnStdout: true).trim()
+                    if (frontendExists) {
+                        echo "Stopping and removing existing frontend-container..."
+                        bat "docker stop frontend-container || true"
+                        bat "docker rm frontend-container || true"
+                    }
+
+                    // Ejecutar el contenedor del frontend
+                    bat """
+                        docker run -d --name frontend-container \
+                        -p 5173:80 victorvaraspro/tingeso-frontend:latest
+                    """
                 }
             }
         }
