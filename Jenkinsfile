@@ -47,5 +47,17 @@ pipeline {
                 }
             }
         }
+
+        stage("Deploy Docker Containers") {
+            steps {
+                script {
+                    echo "Deploying Backend Container..."
+                    bat "docker run -d --name backend-container -p 8090:8090 victorvaraspro/tingeso-backend:latest"
+
+                    echo "Deploying Frontend Container..."
+                    bat "docker run -d --name frontend-container -p 5175:5175 victorvaraspro/tingeso-frontend:latest"
+                }
+            }
+        }
     }
 }
