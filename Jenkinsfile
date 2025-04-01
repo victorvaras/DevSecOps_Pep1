@@ -65,7 +65,7 @@ pipeline {
                         // Ejecutar el contenedor del backend con variables de entorno
                         bat """
                             docker run -d --name backend-container \
-                            -e DB_HOST=10.0.119.31 \
+                            -e DB_HOST=192.168.100.10 \
                             -p 8090:8090 victorvaraspro/tingeso-backend:latest
                         """
 
