@@ -11,7 +11,7 @@ pipeline {
     stages {
         stage("Build Backend and Push Docker image") {
             steps {
-                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/victorvaras/Tingeso_Proyecto_1.git']])
+                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/victorvaras/DevSecOps_Pep1.git']])
                 dir("Backend") {
                     bat "mvn clean install"
                     script {
@@ -34,7 +34,7 @@ pipeline {
 
         stage("Build Frontend and push docker image") {
             steps {
-                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/victorvaras/Tingeso_Proyecto_1.git']])
+                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/victorvaras/DevSecOps_Pep1.git']])
                 dir("Frontend") {
                     bat "npm install"
                     bat "npm run build"
