@@ -79,7 +79,7 @@ pipeline {
                         }
 
                         // Ejecutar el contenedor del frontend
-                        bat " docker run -d --name frontend-container -e VITE_PAYROLL_BACKEND_SERVER=192.168.100.10 -p 5173:80 victorvaraspro/tingeso-frontend:latest"
+                        bat " docker run -d --name frontend-container -p 5173:80 victorvaraspro/tingeso-frontend:latest"
                         
                     }
                 }
