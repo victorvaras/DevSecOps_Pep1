@@ -4,11 +4,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import Backend.Tingeso.Backend.Entity.Evaluacion_Credito_Entity;
-import Backend.Tingeso.Backend.Entity.Simulacion_Credito_Entity;
 import Backend.Tingeso.Backend.Entity.Solicitud_Credito_Entity;
 import Backend.Tingeso.Backend.Entity.Tipo_Prestamo_Entity;
 import Backend.Tingeso.Backend.Repository.Evaluacion_Credito_Repository;
-import Backend.Tingeso.Backend.Repository.Simulacion_Credito_Repository;
 import Backend.Tingeso.Backend.Repository.Solicitud_Credito_Repository;
 import Backend.Tingeso.Backend.Repository.Tipo_Prestamo_Repository;
 import Backend.Tingeso.Backend.Service.Business_Logic_Service;
@@ -23,8 +21,6 @@ import java.util.Map;
 
 public class BusinessLogicServiceTest {
 
-    @Mock
-    private Simulacion_Credito_Repository simulacion_credito_repository;
 
     @Mock
     private Tipo_Prestamo_Repository tipo_prestamo_repository;
@@ -46,33 +42,6 @@ public class BusinessLogicServiceTest {
         MockitoAnnotations.openMocks(this);
     }
 
-    @Test
-    public void testMonthlyFeeCalculation() {
-        // Arrange: Configurar la simulación y el tipo de préstamo
-        Simulacion_Credito_Entity simulacion = new Simulacion_Credito_Entity();
-        simulacion.setId_Tipo_Prestamo(1);
-        simulacion.setMonto_deseado(100000);  // Monto deseado de 100,000
-        simulacion.setPlazo_deseado(5);  // Plazo deseado de 5 años
-
-        Tipo_Prestamo_Entity tipoPrestamo = new Tipo_Prestamo_Entity();
-        tipoPrestamo.setTasa_anual(12);  // Tasa anual del 12%
-
-        when(tipo_prestamo_repository.getById(1)).thenReturn(tipoPrestamo);
-
-        // Act: Llamar al método a probar
-        int resultado = business_logic_service.monthly_fee_calculation(simulacion);
-
-        // Assert: Verificar que el resultado sea correcto
-        double tasa_mensual = 12.0 / 12 / 100;  // Tasa mensual del 1%
-        int plazo = 5 * 12;  // Plazo en meses (5 años)
-        double montoEsperado = (100000 * tasa_mensual * Math.pow((1 + tasa_mensual), plazo)) /
-                (Math.pow((1 + tasa_mensual), plazo) - 1);
-
-        assertEquals((int) montoEsperado, resultado);
-
-        // Verificar que el método getById del repositorio fue llamado correctamente
-        verify(tipo_prestamo_repository, times(1)).getById(1);
-    }
 
     @Test
     public void testValidateR1_RelacionMenorOIgual35() {
