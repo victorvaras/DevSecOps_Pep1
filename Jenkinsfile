@@ -9,15 +9,28 @@ pipeline {
         }
 
     stages {
+        stage("Checkout repository"){
+            steps{
+                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/victorvaras/DevSecOps_Pep1.git']])
+            }
+        }
+
         stage("Build Backend and Push Docker image") {
             steps {
-                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/victorvaras/DevSecOps_Pep1.git']])
+                
                 dir("Backend") {
                     bat "mvn clean install"
                     script {
-                        docker.withRegistry('', DOCKER_CREDENTIALS_ID) {
-                        bat "docker build -t victorvaraspro/tingeso-backend:latest ."
-                        bat "docker push victorvaraspro/tingeso-backend:latest"
+                        if(isUnix()){
+                          docker.withRegistry('', DOCKER_CREDENTIALS_ID) {
+                                sh "docker build -t victorvaraspro/tingeso-backend:latest ."
+                                sh "docker push victorvaraspro/tingeso-backend:latest"
+                            }
+                        }else{
+                            docker.withRegistry('', DOCKER_CREDENTIALS_ID) {
+                                bat "docker build -t victorvaraspro/tingeso-backend:latest ."
+                                bat "docker push victorvaraspro/tingeso-backend:latest"
+                            }
                         }
                     }
                 }
@@ -27,21 +40,31 @@ pipeline {
         stage("Test") {
             steps {
                 dir("Backend") {
-                    bat "mvn test"
+                    if(isUnix()){
+                        sh "mvn test"
+                    }else{
+                        bat "mvn test"
+                    }
                 }
             }
         }
 
         stage("Build Frontend and push docker image") {
             steps {
-                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/victorvaras/DevSecOps_Pep1.git']])
                 dir("Frontend") {
                     bat "npm install"
                     bat "npm run build"
                     script {
-                        docker.withRegistry('', DOCKER_CREDENTIALS_ID) {
-                        bat "docker build -t victorvaraspro/tingeso-frontend:latest ."
-                        bat "docker push victorvaraspro/tingeso-frontend:latest"
+                        if(isUnix()){
+                            docker.withRegistry('', DOCKER_CREDENTIALS_ID) {
+                                    sh "docker build -t victorvaraspro/tingeso-frontend:latest ."
+                                    sh "docker push victorvaraspro/tingeso-frontend:latest"
+                                }
+                        }else{
+                            docker.withRegistry('', DOCKER_CREDENTIALS_ID) {
+                                bat "docker build -t victorvaraspro/tingeso-frontend:latest ."
+                                bat "docker push victorvaraspro/tingeso-frontend:latest"
+                            }
                         }
                     }
                 }
