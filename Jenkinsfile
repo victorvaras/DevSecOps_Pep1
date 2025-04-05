@@ -29,7 +29,7 @@ pipeline {
             }
         }
 
-        stage("Test") {
+        stage("Test Backend") {
             steps {
                 dir("Backend") {
                     bat "mvn test"
