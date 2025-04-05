@@ -5,7 +5,6 @@ pipeline {
     }
     environment {
             DOCKER_CREDENTIALS_ID = 'dockerhub_credentials' // ID que configuraste en Jenkins
-            GITHUB_CREDENTIALS    = 'github_credencial'
         }
 
     stages {
@@ -21,17 +20,10 @@ pipeline {
                 dir("Backend") {
                     bat "mvn clean install"
                     script {
-                        if(isUnix()){
-                          docker.withRegistry('', DOCKER_CREDENTIALS_ID) {
-                                sh "docker build -t victorvaraspro/tingeso-backend:latest ."
-                                sh "docker push victorvaraspro/tingeso-backend:latest"
-                            }
-                        }else{
-                            docker.withRegistry('', DOCKER_CREDENTIALS_ID) {
+                        docker.withRegistry('', DOCKER_CREDENTIALS_ID) {
                                 bat "docker build -t victorvaraspro/tingeso-backend:latest ."
                                 bat "docker push victorvaraspro/tingeso-backend:latest"
                             }
-                        }
                     }
                 }
             }
@@ -40,11 +32,7 @@ pipeline {
         stage("Test") {
             steps {
                 dir("Backend") {
-                    if(isUnix()){
-                        sh "mvn test"
-                    }else{
-                        bat "mvn test"
-                    }
+                    bat "mvn test"
                 }
             }
         }
@@ -55,17 +43,10 @@ pipeline {
                     bat "npm install"
                     bat "npm run build"
                     script {
-                        if(isUnix()){
-                            docker.withRegistry('', DOCKER_CREDENTIALS_ID) {
-                                    sh "docker build -t victorvaraspro/tingeso-frontend:latest ."
-                                    sh "docker push victorvaraspro/tingeso-frontend:latest"
-                                }
-                        }else{
-                            docker.withRegistry('', DOCKER_CREDENTIALS_ID) {
+                        docker.withRegistry('', DOCKER_CREDENTIALS_ID) {
                                 bat "docker build -t victorvaraspro/tingeso-frontend:latest ."
                                 bat "docker push victorvaraspro/tingeso-frontend:latest"
                             }
-                        }
                     }
                 }
             }
