@@ -5,6 +5,7 @@ pipeline {
     }
     environment {
             DOCKER_CREDENTIALS_ID = 'dockerhub_credentials' // ID que configuraste en Jenkins
+            
         }
 
     stages {
