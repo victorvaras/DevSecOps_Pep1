@@ -25,7 +25,7 @@ const Inicio = () => {
     return (
         <Stack spacing={2} direction="row">
             
-        
+            <Button variant="contained" onClick={handleSimularCredito}> Simulacion de credito</Button>
             <Button variant="contained" onClick={handleRegisterClient}>Registrar nuevo cliente</Button>
             <Button variant="contained" onClick={handleLoginClient}>Login Cliente</Button>
             <Button variant="contained" onClick={handleCreditRequest}>Solicitudes de Credito</Button>
