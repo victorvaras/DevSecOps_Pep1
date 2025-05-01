@@ -92,8 +92,8 @@ pipeline {
                         def backendExists = bat(script: "docker ps -a -q -f name=backend-container", returnStdout: true).trim()
                         if (backendExists) {
                             echo "Stopping and removing existing backend-container..."
-                            bat "docker stop backend-container || true"
-                            bat "docker rm backend-container || true"
+                            bat "docker stop backend-container || exit 0"
+                            bat "docker rm backend-container || exit 0"
                         }
 
                         // Ejecutar el contenedor del backend con variables de entorno
@@ -105,8 +105,8 @@ pipeline {
                         def frontendExists = bat(script: "docker ps -a -q -f name=frontend-container", returnStdout: true).trim()
                         if (frontendExists) {
                             echo "Stopping and removing existing frontend-container..."
-                            bat "docker stop frontend-container || true"
-                            bat "docker rm frontend-container || true"
+                            bat "docker stop frontend-container || exit 0"
+                            bat "docker rm frontend-container || exit 0"
                         }
 
                         // Ejecutar el contenedor del frontend
