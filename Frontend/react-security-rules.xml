@@ -1,20 +1,17 @@
-<?xml version="1.0"?>
-<ruleset name="React Best Practices Ruleset"
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset name="React Security Best Practices"
          xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
 
-    <description>Reglas para mejores prácticas y seguridad en ReactJS</description>
+    <description>Reglas de seguridad y mejores prácticas para ReactJS/NodeJS (PMD 7+)</description>
 
-    <!-- Reglas PMD nativas para HTML/JS -->
-    <rule ref="category/html/bestpractices.xml/AvoidInlineStyles" />  <!-- [1] -->
-    <rule ref="category/html/bestpractices.xml/UnnecessaryTypeAttribute" />  <!-- [1] -->
-    <rule ref="category/javascript/bestpractices.xml/UnusedLocalVariable" />
-
-    <!-- Reglas personalizadas para React -->
+    <!-- ================================= -->
+    <!-- 1. Reglas de Seguridad ReactJS    -->
+    <!-- ================================= -->
     <rule name="AvoidDangerouslySetInnerHTML"
           language="jsx"
-          message="Evitar uso de dangerouslySetInnerHTML sin sanitización [2][4]">
+          message="[SEC-01] Uso de dangerouslySetInnerHTML sin sanitización">
         <priority>1</priority>
         <properties>
             <property name="xpath">
@@ -24,33 +21,37 @@
                 ]]></value>
             </property>
         </properties>
-        <example><![CDATA[
-            // Mal
+        <example>
+            <![CDATA[
+            // ❌ Incorrecto
             <div dangerouslySetInnerHTML={{__html: userContent}} />
-            
-            // Bueno
+
+            // ✅ Correcto
             <div dangerouslySetInnerHTML={{__html: sanitizeHTML(userContent)}} />
-        ]]></example>
+            ]]>
+        </example>
     </rule>
 
-    <rule name="HookUsageOrder"
-          language="js"
-          message="Los Hooks deben ser usados en orden consistente [4]">
+    <rule name="SecureReactRouterNavigation"
+          language="jsx"
+          message="[SEC-02] Navegación no segura con React Router">
         <priority>2</priority>
         <properties>
             <property name="xpath">
                 <value><![CDATA[
-                    //CallExpression[matches(@Image,'^use[A-Z]')]
-                    [not(ancestor::FunctionDeclaration)]
+                    //Literal[matches(@Image,'^http://')]
                 ]]></value>
             </property>
         </properties>
     </rule>
 
-    <rule name="PropTypesValidation"
+    <!-- ================================= -->
+    <!-- 2. Mejores Prácticas ReactJS      -->
+    <!-- ================================= -->
+    <rule name="ComponentPropTypesValidation"
           language="js"
-          message="Componente sin validación de PropTypes [2]">
-        <priority>3</priority>
+          message="[BP-01] Componente sin validación de PropTypes">
+        <priority>2</priority>
         <properties>
             <property name="xpath">
                 <value><![CDATA[
@@ -61,27 +62,62 @@
         </properties>
     </rule>
 
-    <!-- Reglas de estructura de código -->
-    <rule name="ComponentSize"
+    <rule name="HookUsageOrder"
           language="js"
-          message="Componente excede 200 líneas - considerar descomposición [2]">
-        <priority>3</priority>
+          message="[BP-02] Los Hooks deben ser usados en orden consistente">
+        <priority>1</priority>
         <properties>
-            <property name="minimum">
-                <value>200</value>
+            <property name="xpath">
+                <value><![CDATA[
+                    //CallExpression[matches(@Image,'^use[A-Z]')]
+                    [not(ancestor::FunctionDeclaration)]
+                ]]></value>
             </property>
         </properties>
     </rule>
 
-    <rule name="InlineEventHandler"
+    <!-- ================================= -->
+    <!-- 3. Reglas de Performance          -->
+    <!-- ================================= -->
+    <rule name="AvoidInlineFunctionsInRender"
           language="jsx"
-          message="Evitar manejadores de eventos inline en JSX [4]">
+          message="[PERF-01] Evitar funciones inline en renderizado">
         <priority>2</priority>
         <properties>
             <property name="xpath">
                 <value><![CDATA[
                     //JSXAttribute[matches(@Name,'^on[A-Z]')]
-                    [ArrowFunctionExpression or FunctionExpression]
+                    /AttributeValue/ArrowFunctionExpression
+                ]]></value>
+            </property>
+        </properties>
+    </rule>
+
+    <rule name="OptimizeReRenders"
+          language="jsx"
+          message="[PERF-02] Componente sin React.memo o shouldComponentUpdate">
+        <priority>3</priority>
+        <properties>
+            <property name="xpath">
+                <value><![CDATA[
+                    //FunctionDeclaration[matches(@Image,'^[A-Z]')]
+                    [not(ancestor::CallExpression/Callee/Identifier/@Name='memo')]
+                ]]></value>
+            </property>
+        </properties>
+    </rule>
+
+    <!-- ================================= -->
+    <!-- 4. Reglas de Estructura           -->
+    <!-- ================================= -->
+    <rule name="ComponentFileStructure"
+          language="js"
+          message="[STR-01] Archivo debe contener solo un componente principal">
+        <priority>3</priority>
+        <properties>
+            <property name="xpath">
+                <value><![CDATA[
+                    count(//FunctionDeclaration[matches(@Image,'^[A-Z]')]) > 1
                 ]]></value>
             </property>
         </properties>
