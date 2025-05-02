@@ -4,13 +4,14 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
 
-    <description>Reglas de seguridad y mejores prácticas para ReactJS/NodeJS (PMD 7+)</description>
+    <description>Reglas de seguridad y mejores prácticas para ReactJS/NodeJS (PMD 7.12+)</description>
 
     <!-- ================================= -->
     <!-- 1. Reglas de Seguridad ReactJS    -->
     <!-- ================================= -->
     <rule name="AvoidDangerouslySetInnerHTML"
           language="jsx"
+          class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
           message="[SEC-01] Uso de dangerouslySetInnerHTML sin sanitización">
         <priority>1</priority>
         <properties>
@@ -34,6 +35,7 @@
 
     <rule name="SecureReactRouterNavigation"
           language="jsx"
+          class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
           message="[SEC-02] Navegación no segura con React Router">
         <priority>2</priority>
         <properties>
@@ -50,6 +52,7 @@
     <!-- ================================= -->
     <rule name="ComponentPropTypesValidation"
           language="js"
+          class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
           message="[BP-01] Componente sin validación de PropTypes">
         <priority>2</priority>
         <properties>
@@ -64,6 +67,7 @@
 
     <rule name="HookUsageOrder"
           language="js"
+          class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
           message="[BP-02] Los Hooks deben ser usados en orden consistente">
         <priority>1</priority>
         <properties>
@@ -81,6 +85,7 @@
     <!-- ================================= -->
     <rule name="AvoidInlineFunctionsInRender"
           language="jsx"
+          class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
           message="[PERF-01] Evitar funciones inline en renderizado">
         <priority>2</priority>
         <properties>
@@ -95,6 +100,7 @@
 
     <rule name="OptimizeReRenders"
           language="jsx"
+          class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
           message="[PERF-02] Componente sin React.memo o shouldComponentUpdate">
         <priority>3</priority>
         <properties>
@@ -112,6 +118,7 @@
     <!-- ================================= -->
     <rule name="ComponentFileStructure"
           language="js"
+          class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
           message="[STR-01] Archivo debe contener solo un componente principal">
         <priority>3</priority>
         <properties>
