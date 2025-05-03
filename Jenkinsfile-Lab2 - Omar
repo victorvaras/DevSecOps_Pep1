@@ -135,9 +135,10 @@ pipeline {
                 expression { isUnix() == false } // Solo en Windows
             }
             steps {
-                bat 'start zap-report.html'
+                bat 'start "" zap-report.html'
             }
         }
+
 
     }
 
