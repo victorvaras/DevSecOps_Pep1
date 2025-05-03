@@ -130,6 +130,7 @@ pipeline {
             }
         }
 
+        /*
         stage('Abrir reporte ZAP (paso opcional)') {
             when {
                 expression { isUnix() == false } // Solo en Windows
@@ -138,6 +139,7 @@ pipeline {
                 bat 'start "" zap-report.html'
             }
         }
+        */
 
 
     }
