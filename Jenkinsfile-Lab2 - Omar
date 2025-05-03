@@ -121,22 +121,14 @@ pipeline {
         stage('DAST Scan with ZAP') {
             steps {
                 script {
+                    // Ejecutar ZAP para escanear el backend en localhost:8090
                     bat '''
-                        echo Esperando a que el backend esté disponible...
-                        for /l %%i in (1,1,10) do (
-                            curl -s http://host.docker.internal:8090 >nul 2>&1 && goto ok
-                            timeout /t 5 >nul
-                        )
-                        echo No se pudo conectar al backend. Abortando...
-                        exit /b 1
-                        :ok
-                        echo Backend disponible. Ejecutando ZAP...
-                        docker run --rm -v %cd%:/zap/wrk/:rw ghcr.io/zaproxy/zaproxy:stable zap-baseline.py -t http://host.docker.internal:8090 -r zap-report.html
+                        echo Ejecutando ZAP para escanear el backend en http://localhost:8090
+                        docker run --rm -v %cd%:/zap/wrk/:rw ghcr.io/zaproxy/zaproxy:stable zap-baseline.py -t http://localhost:8090 -r zap-report.html
                     '''
                 }
             }
         }
-
 
 
     }
