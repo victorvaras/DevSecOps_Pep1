@@ -73,3 +73,76 @@ Los resultados se verán en el dashboard de SonarQube en http://localhost:9000.
 Si SonarQube no arranca, asegúrate de que Docker tiene al menos 2 GB de RAM asignados.
 
 Si el puerto 9000 está en uso, cambia el puerto externo a otro, por ejemplo: docker run -d --name sonarqube -p 9001:9000 sonarqube:community
+
+---
+
+### ✅ PASOS PARA CONFIGURAR ZAP DAST ANALIZANDO EL FRONTEND (pasos ordenados por chat gpt y depurados por mi)
+
+#### 📌 1. Nota previa
+
+> ⚠️ El contenedor de ZAP solo se levanta mientras escanea, y luego se elimina automáticamente (`--rm`), tambien ZAP solo se realiza el analisis mediante front ya que simula ser un USER.
+
+---
+
+#### 🧱 2. Comando para traer la imagen mediante docker local
+
+En un cmd:
+
+docker pull ghcr.io/zaproxy/zaproxy:stable
+
+docker run -u zap -p 9090:9090 ghcr.io/zaproxy/zaproxy:stable
+
+---
+
+#### ✅ 3. Agregar stage en tu Jenkinsfile
+
+Agrega esto dentro del bloque stages al final de todo, despues de levantar y desplegar:
+
+stage('DAST Scan with ZAP') {
+    steps {
+        script {
+            // Ejecutar ZAP para escanear el frontend en localhost:5173
+            bat '''
+                echo Ejecutando ZAP para escanear el frontend en http://localhost:5173
+                docker run --rm -v %cd%:/zap/wrk/:rw ghcr.io/zaproxy/zaproxy:stable zap-baseline.py -t http://localhost:5173 -r zap-report.html
+            '''
+        }
+    }
+}
+
+stage('Abrir reporte ZAP (paso opcional)') {
+    when {
+        expression { isUnix() == false } // Solo en Windows
+    }
+    steps {
+        bat 'start zap-report.html'
+    }
+}
+
+
+---
+
+#### 📦 4. Bloque `post` al final del `Jenkinsfile` va por fuera de toda la seccion de stage
+
+
+post {
+    always {
+        archiveArtifacts artifacts: 'zap-report.html', fingerprint: true
+    }
+}
+
+---
+
+### 📄 ¿Dónde ver el resultado del escaneo?
+
+1. En Jenkins, entra al **build job** correspondiente.
+2. Al final de la página, en **"Artifacts"**, haz clic en `zap-report.html`.
+3. Se abrirá o descargará un reporte visual en HTML con:
+
+   * Alertas de seguridad
+   * Severidad (Alta, Media, Baja)
+   * Tipo (XSS, CSRF, Inyecciones, etc.)
+   * URL afectadas
+
+---
+
