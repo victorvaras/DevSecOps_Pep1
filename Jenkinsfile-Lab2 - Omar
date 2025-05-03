@@ -117,64 +117,30 @@ pipeline {
         }
 
 
-        //Nueva segmento para DAST con herramienta zap
+        // Segmento para DAST con herramienta ZAP
         stage('DAST Scan with ZAP') {
             steps {
                 script {
                     // Ejecutar ZAP para escanear el frontend en localhost:5173
                     bat '''
-                        echo Ejecutando ZAP para escanear el frontend en http://[TU_IP]:5173
+                        echo Ejecutando ZAP para escanear el frontend en http://192.168.1.166:5173
                         docker run --rm -v %cd%:/zap/wrk/:rw ghcr.io/zaproxy/zaproxy:stable zap-baseline.py -t http://192.168.1.166:5173 -r zap-report.html || exit 0
                     '''
                 }
             }
         }
 
-        /*
-        stage('Abrir reporte ZAP (paso opcional)') {
-            when {
-                expression { isUnix() == false } // Solo en Windows
-            }
+        stage('Verificar archivos generados') {
             steps {
-                bat 'start "" zap-report.html'
-            }
-        }
-        */
-        stage('Generar reporte ZAP') {
-            steps {
-                script {
-                    // Asumiendo que ZAP generó un archivo HTML llamado 'zap-report.html'
-                    // Lo guardamos como un artefacto en Jenkins para que puedas descargarlo después
-                    sh 'zap-cli report -o zap-report.html'
-                }
+                bat 'dir'
             }
         }
 
         stage('Archivar reporte ZAP') {
             steps {
-                // Archivamos el reporte HTML generado para que esté disponible en Jenkins
                 archiveArtifacts artifacts: 'zap-report.html', allowEmptyArchive: true
             }
         }
 
-        stage('Abrir reporte ZAP (paso opcional)') {
-            when {
-                expression { isUnix() == false } // Solo en Windows
-            }
-            steps {
-                // Intentamos abrir el reporte si es necesario (en Windows)
-                bat 'start "" zap-report.html'
-            }
-        }
-
-
-    }
-
-    //Se agrega fuera de todo el bloque de los stages, para visualizar todo el reporte de ZAP
-    post {
-        always {
-            archiveArtifacts artifacts: 'zap-report.html', fingerprint: true
-        }
-    }
 
 }
