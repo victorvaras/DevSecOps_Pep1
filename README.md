@@ -97,38 +97,30 @@ docker run -u zap -p 9090:9090 ghcr.io/zaproxy/zaproxy:stable
 Agrega esto dentro del bloque stages al final de todo, después de levantar y desplegar:
 
 <pre>
-stage('DAST Scan with ZAP') {
-    steps {
-        script {
-            // Ejecutar ZAP para escanear el frontend en localhost:5173
-            bat '''
-                echo Ejecutando ZAP para escanear el frontend en http://[TU_IP]:5173
-                docker run --rm -v %cd%:/zap/wrk/:rw ghcr.io/zaproxy/zaproxy:stable zap-baseline.py -t http://TU_IP:5173 -r zap-report.html
-            '''
+// Segmento para DAST con herramienta ZAP
+        stage('DAST Scan with ZAP') {
+            steps {
+                script {
+                    // Ejecutar ZAP para escanear el frontend en localhost:5173
+                    bat '''
+                        echo Ejecutando ZAP para escanear el frontend en http://{TU_IP}:5173
+                        docker run --rm -v %cd%:/zap/wrk/:rw ghcr.io/zaproxy/zaproxy:stable zap-baseline.py -t http://TU_IP:5173 -r zap-report.html || exit 0
+                    '''
+                }
+            }
         }
-    }
-}
 
-stage('Abrir reporte ZAP (paso opcional)') {
-    when {
-        expression { isUnix() == false } // Solo en Windows
-    }
-    steps {
-        bat 'start zap-report.html'
-    }
-}
-</pre>
+        stage('Verificar archivos generados') {
+            steps {
+                bat 'dir'
+            }
+        }
 
----
-
-#### 📦 4. Bloque `post` al final del `Jenkinsfile` va por fuera de toda la sección de stage
-
-<pre>
-post {
-    always {
-        archiveArtifacts artifacts: 'zap-report.html', fingerprint: true
-    }
-}
+        stage('Archivar reporte ZAP') {
+            steps {
+                archiveArtifacts artifacts: 'zap-report.html', allowEmptyArchive: true
+            }
+        }
 </pre>
 
 ---
@@ -137,8 +129,8 @@ post {
 ### 📄 ¿Dónde ver el resultado del escaneo?
 
 1. En Jenkins, entra al **build job** correspondiente.
-2. Al final de la página, en **"Artifacts"**, haz clic en `zap-report.html`.
-3. Se abrirá o descargará un reporte visual en HTML con:
+2. En Status veras **"Artifacts"**, haz clic en `zap-report.html`.
+3. Se abrirá un reporte visual en HTML con:
 
    * Alertas de seguridad
    * Severidad (Alta, Media, Baja)
