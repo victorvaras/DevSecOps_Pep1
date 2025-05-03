@@ -41,29 +41,13 @@ Authentication Token: selecciona el token que creaste.
 Guarda la configuración.
 
 5. Actualizar el Jenkinsfile
-Abre tu Jenkinsfile y agrega el siguiente stage para analizar el código con SonarQube:
+Agrega el siguiente stage dentro del bloque stages para analizar el código con SonarQube:
 
-groovy
-Copiar
-Editar
-stage("SonarQube Analysis") {
-    steps {
-        withSonarQubeEnv('SonarQube') {
-            dir("Backend") {
-                bat "mvn sonar:sonar -Dsonar.projectKey=backend -Dsonar.login=${SONAR_TOKEN}"
-            }
-        }
-    }
-}
-En la sección environment de tu Jenkinsfile, agrega:
+<pre> <code> stage("SonarQube Analysis") { steps { withSonarQubeEnv('SonarQube') { dir("Backend") { bat "mvn sonar:sonar -Dsonar.projectKey=backend -Dsonar.login=${SONAR_TOKEN}" } } } } </code> </pre>
+Agrega esta parte dentro del bloque environment en tu Jenkinsfile:
 
-groovy
-Copiar
-Editar
-environment {
-    DOCKER_CREDENTIALS_ID = 'dockerhub_credentials'
-    SONAR_TOKEN = credentials('sonarqube_token')
-}
+<pre> <code> environment { DOCKER_CREDENTIALS_ID = 'dockerhub_credentials' SONAR_TOKEN = credentials('sonarqube_token') } </code> </pre>
+
 6. Verificar el flujo
 Después de un commit y ejecutar el pipeline, Jenkins enviará el análisis a SonarQube.
 
@@ -96,8 +80,10 @@ docker run -u zap -p 9090:9090 ghcr.io/zaproxy/zaproxy:stable
 
 #### ✅ 3. Agregar stage en tu Jenkinsfile
 
-Agrega esto dentro del bloque stages al final de todo, despues de levantar y desplegar:
+Agrega esto dentro del bloque stages al final de todo, después de levantar y desplegar:
 
+<pre>
+```groovy
 stage('DAST Scan with ZAP') {
     steps {
         script {
@@ -118,20 +104,25 @@ stage('Abrir reporte ZAP (paso opcional)') {
         bat 'start zap-report.html'
     }
 }
-
+```
+</pre>
 
 ---
 
-#### 📦 4. Bloque `post` al final del `Jenkinsfile` va por fuera de toda la seccion de stage
+#### 📦 4. Bloque `post` al final del `Jenkinsfile` va por fuera de toda la sección de stage
 
-
+<pre>
+```groovy
 post {
     always {
         archiveArtifacts artifacts: 'zap-report.html', fingerprint: true
     }
 }
+```
+</pre>
 
 ---
+
 
 ### 📄 ¿Dónde ver el resultado del escaneo?
 
