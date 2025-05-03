@@ -117,12 +117,12 @@ pipeline {
         }
 
 
-
+        //Nueva segmento para DAST con herramienta zap
         stage('DAST Scan with ZAP') {
             steps {
                 script {
                     bat '''
-                        docker run --rm -v %cd%:/zap/wrk/:rw ghcr.io/zaproxy/zaproxy:stable zap-baseline.py -t http://host.docker.internal:8090 -r zap-report.html
+                        docker run --rm -v %cd%:/zap/wrk/:rw ghcr.io/zaproxy/zaproxy:stable zap-baseline.py -t http://172.17.0.1:8090 -r zap-report.html
                     '''
                 }
             }
@@ -130,6 +130,7 @@ pipeline {
 
     }
 
+    //Se agrega fuera de todo el bloque de los stages, para visualizar todo el reporte de ZAP
     post {
         always {
             archiveArtifacts artifacts: 'zap-report.html', fingerprint: true
