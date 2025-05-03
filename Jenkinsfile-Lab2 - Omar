@@ -115,5 +115,18 @@ pipeline {
                 }
             }
         }
+
+
+
+        stage('DAST Scan with ZAP') {
+            steps {
+                script {
+                    bat '''
+                        docker run --rm -v %cd%:/zap/wrk/:rw ghcr.io/zaproxy/zaproxy:stable zap-baseline.py -t http://host.docker.internal:8090 -r zap-report.html
+                    '''
+                }
+            }
+        }
+
     }
 }
