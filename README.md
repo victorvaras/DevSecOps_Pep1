@@ -102,8 +102,8 @@ stage('DAST Scan with ZAP') {
         script {
             // Ejecutar ZAP para escanear el frontend en localhost:5173
             bat '''
-                echo Ejecutando ZAP para escanear el frontend en http://localhost:5173
-                docker run --rm -v %cd%:/zap/wrk/:rw ghcr.io/zaproxy/zaproxy:stable zap-baseline.py -t http://localhost:5173 -r zap-report.html
+                echo Ejecutando ZAP para escanear el frontend en http://[TU_IP]:5173
+                docker run --rm -v %cd%:/zap/wrk/:rw ghcr.io/zaproxy/zaproxy:stable zap-baseline.py -t http://TU_IP:5173 -r zap-report.html
             '''
         }
     }
