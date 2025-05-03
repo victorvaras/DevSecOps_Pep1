@@ -140,6 +140,32 @@ pipeline {
             }
         }
         */
+        stage('Generar reporte ZAP') {
+            steps {
+                script {
+                    // Asumiendo que ZAP generó un archivo HTML llamado 'zap-report.html'
+                    // Lo guardamos como un artefacto en Jenkins para que puedas descargarlo después
+                    sh 'zap-cli report -o zap-report.html'
+                }
+            }
+        }
+
+        stage('Archivar reporte ZAP') {
+            steps {
+                // Archivamos el reporte HTML generado para que esté disponible en Jenkins
+                archiveArtifacts artifacts: 'zap-report.html', allowEmptyArchive: true
+            }
+        }
+
+        stage('Abrir reporte ZAP (paso opcional)') {
+            when {
+                expression { isUnix() == false } // Solo en Windows
+            }
+            steps {
+                // Intentamos abrir el reporte si es necesario (en Windows)
+                bat 'start "" zap-report.html'
+            }
+        }
 
 
     }
