@@ -5,7 +5,6 @@ pipeline {
     }
     environment {
         DOCKER_CREDENTIALS_ID = 'dockerhub_credentials' // ID que configuraste en Jenkins
-        DB_HOST = 'localhost'
         // Puedes agregar más variables si lo necesitas
     }
 
