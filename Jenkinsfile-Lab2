@@ -97,7 +97,7 @@ pipeline {
                         """
 
                         // Copiar al escritorio
-                        bat "copy pmd-frontend.xml F:\DevSecObs_lab1\pmd-frontend.xml"
+                        bat "copy pmd-frontend.xml F:\\DevSecObs_lab1\\pmd-frontend.xml"
 
                         // Archivar desde el workspace
                         archiveArtifacts artifacts: 'pmd-frontend.xml'
