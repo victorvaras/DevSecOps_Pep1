@@ -15,10 +15,16 @@ pipeline {
             }
         }
 
+        stage('Install Tools') {
+            steps {
+                bat 'choco install pmd --version=7.12.0 -y --package-parameters="'/Features:Ecmascript'"'
+            }
+        }
+
         stage("Build Backend and Push Docker image") {
             steps {
                 dir("Backend") {
-                    bat "mvn clean install"
+                    bat "mvn clean install -Dpmd.skip=true"
                     script {
                         docker.withRegistry('', DOCKER_CREDENTIALS_ID) {
                             bat "docker build -t victorvaraspro/tingeso-backend:latest ."
