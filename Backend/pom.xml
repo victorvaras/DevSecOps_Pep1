@@ -57,7 +57,7 @@
 					<rulesets>
 						<ruleset>rulesets/java/quickstart.xml</ruleset>
 					</rulesets>
-					<outputDirectory>C:/Users/frane/Desktop</outputDirectory>
+					<outputDirectory>F:\DevSecObs_lab1</outputDirectory>
 				</configuration>
 				<dependencies>
 					<dependency>

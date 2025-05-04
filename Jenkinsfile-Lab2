@@ -36,6 +36,15 @@ pipeline {
                 }
             }
         }
+
+        stage("SAST Analysis with PMD") {
+            steps {
+                dir("Backend") {
+                    bat "mvn pmd:pmd pmd:check -Dpmd.failOnViolation=false"
+                    archiveArtifacts artifacts: '**/pmd.xml'
+                }
+            }
+        }
         
         // NUEVA ETAPA: Análisis con SonarQube
         stage("SonarQube Analysis Backend") {
@@ -61,6 +70,30 @@ pipeline {
                             bat "docker build -t victorvaraspro/tingeso-frontend:latest ."
                             bat "docker push victorvaraspro/tingeso-frontend:latest"
                         }
+                    }
+                }
+            }
+        }
+
+        stage("SAST Frontend") {
+            steps {
+                dir("Frontend") {
+                    script {
+                        // Generar reporte en el workspace
+                        bat """
+                            pmd check ^
+                            --dir src ^
+                            --rulesets "react-security-rules.xml" ^
+                            --format xml ^
+                            --report-file "pmd-frontend.xml" ^
+                            --no-fail-on-violation
+                        """
+
+                        // Copiar al escritorio
+                        bat "copy pmd-frontend.xml F:\DevSecObs_lab1\pmd-frontend.xml"
+
+                        // Archivar desde el workspace
+                        archiveArtifacts artifacts: 'pmd-frontend.xml'
                     }
                 }
             }
