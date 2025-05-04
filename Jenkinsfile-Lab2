@@ -116,7 +116,6 @@ pipeline {
                 }
             }
         }
-
         
 
         stage("Deploy Docker Containers") {
@@ -150,6 +149,33 @@ pipeline {
                         bat "docker run -d --name frontend-container -p 5173:80 victorvaraspro/tingeso-frontend:latest"
                     }
                 }
+            }
+        }
+
+
+
+        // Segmento para DAST con herramienta ZAP
+        stage('DAST Scan with ZAP') {
+            steps {
+                script {
+                    // Ejecutar ZAP para escanear el frontend en localhost:5173
+                    bat '''
+                        echo Ejecutando ZAP para escanear el frontend en http://192.168.100.10:5173
+                        docker run --rm -v %cd%:/zap/wrk/:rw ghcr.io/zaproxy/zaproxy:stable zap-baseline.py -t http://192.168.100.10:5173 -r zap-report.html || exit 0
+                    '''
+                }
+            }
+        }
+
+        stage('Verificar archivos generados') {
+            steps {
+                bat 'dir'
+            }
+        }
+
+        stage('Archivar reporte ZAP') {
+            steps {
+                archiveArtifacts artifacts: 'zap-report.html', allowEmptyArchive: true
             }
         }
     }
