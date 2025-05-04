@@ -57,6 +57,7 @@
 					<rulesets>
 						<ruleset>rulesets/java/quickstart.xml</ruleset>
 					</rulesets>
+					<outputDirectory>C:/Users/frane/Desktop</outputDirectory>
 				</configuration>
 				<dependencies>
 					<dependency>
