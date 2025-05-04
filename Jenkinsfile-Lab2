@@ -4,8 +4,8 @@ pipeline {
         maven "maven"
     }
     environment {
-        DOCKER_CREDENTIALS_ID = 'dockerhub_credentials' // ID que configuraste en Jenkins
-        // Puedes agregar más variables si lo necesitas
+        DOCKER_CREDENTIALS_ID = 'dockerhub_credentials' 
+        SERVER_IP = '192.168.100.10' 
     }
 
     stages {
@@ -15,7 +15,7 @@ pipeline {
             }
         }
 
-        // Instalación de herramientas requeridas
+        
         stage('Install Tools') {
             steps {
                 bat 'choco install pmd --version=7.12.0 -y --package-parameters="\'/Features:Ecmascript\'"'
@@ -44,7 +44,7 @@ pipeline {
             }
         }
 
-        stage("SAST Analysis with PMD") {
+        stage("SAST PMD Backend") {
             steps {
                 dir("Backend") {
                     bat "mvn pmd:pmd pmd:check -Dpmd.failOnViolation=false"
@@ -53,8 +53,8 @@ pipeline {
             }
         }
         
-        // NUEVA ETAPA: Análisis con SonarQube
-        stage("SonarQube Analysis Backend") {
+        
+        stage("SAST SonarQubes Backend") {
             steps {
                 dir("Backend") {
                     withSonarQubeEnv('SonarQube') {
@@ -82,7 +82,7 @@ pipeline {
             }
         }
 
-        stage("SAST Frontend") {
+        stage("SAST PMD Frontend") {
             steps {
                 dir("Frontend") {
                     script {
@@ -107,7 +107,7 @@ pipeline {
         }
         
         
-        stage("SonarQube Analysis Frontend") {
+        stage("SAST SonarQube Frontend") {
             steps {
                 dir("Frontend") {
                     withSonarQubeEnv('SonarQube') {
@@ -133,7 +133,7 @@ pipeline {
                         }
 
                         // Ejecutar el contenedor del backend con variables de entorno
-                        bat "docker run -d --name backend-container -e DB_HOST=192.168.100.10 -p 8090:8090 victorvaraspro/tingeso-backend:latest"
+                        bat "docker run -d --name backend-container -e DB_HOST=${SERVER_IP} -p 8090:8090 victorvaraspro/tingeso-backend:latest"
 
                         echo "Deploying Frontend Container..."
 
@@ -154,14 +154,13 @@ pipeline {
 
 
 
-        // Segmento para DAST con herramienta ZAP
-        stage('DAST Scan with ZAP') {
+       
+        stage('DAST ZAP Scan Frontend') {
             steps {
-                script {
-                    // Ejecutar ZAP para escanear el frontend en localhost:5173
+                script {                    
                     bat '''
-                        echo Ejecutando ZAP para escanear el frontend en http://192.168.100.10:5173
-                        docker run --rm -v %cd%:/zap/wrk/:rw ghcr.io/zaproxy/zaproxy:stable zap-baseline.py -t http://192.168.100.10:5173 -r zap-report.html || exit 0
+                        echo Ejecutando ZAP para escanear el frontend en http://${SERVER_IP}:5173
+                        docker run --rm -v %cd%:/zap/wrk/:rw ghcr.io/zaproxy/zaproxy:stable zap-baseline.py -t http://${SERVER_IP}:5173 -r zap-report.html || exit 0
                     '''
                 }
             }
