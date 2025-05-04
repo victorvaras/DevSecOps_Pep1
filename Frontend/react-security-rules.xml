@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ruleset name="React Security Best Practices"
+<ruleset name="React Advanced Best Practices"
          xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
 
-    <description>Reglas para ReactJS usando PMD + ECMAScript</description>
+    <description>Reglas avanzadas para proyectos React</description>
 
     <!-- ================================= -->
-    <!-- 1. Reglas de Seguridad            -->
+    <!-- 1. Seguridad                      -->
     <!-- ================================= -->
     <rule name="AvoidDangerouslySetInnerHTML"
           language="ecmascript"
           class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
-          message="[SEC-01] Uso de dangerouslySetInnerHTML sin sanitización">
+          message="[SEC-01] Usar dangerouslySetInnerHTML sin sanitización es riesgoso">
         <priority>1</priority>
         <properties>
             <property name="xpath">
@@ -24,36 +24,103 @@
         </properties>
     </rule>
 
+    <rule name="NoEvalUsage"
+          language="ecmascript"
+          class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+          message="[SEC-02] eval() permite ejecución de código arbitrario">
+        <priority>1</priority>
+        <properties>
+            <property name="xpath">
+                <value>//CallExpression/Callee[@Image='eval']</value>
+            </property>
+        </properties>
+    </rule>
+
     <!-- ================================= -->
     <!-- 2. Mejores Prácticas              -->
     <!-- ================================= -->
-    <rule name="HookUsageOrder"
+    <rule name="HookDependencyArray"
           language="ecmascript"
           class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
-          message="[BP-01] Los Hooks deben ser usados en orden consistente">
+          message="[BP-01] Hooks como useEffect/useMemo deben incluir array de dependencias">
         <priority>2</priority>
         <properties>
             <property name="xpath">
                 <value><![CDATA[
-                    //CallExpression[matches(@Image,'^use[A-Z]')]
-                    [not(ancestor::FunctionDeclaration)]
+                    //CallExpression[
+                        @Image = 'useEffect' or @Image = 'useMemo'
+                    ][count(./arguments/*) < 2]
+                ]]></value>
+            </property>
+        </properties>
+    </rule>
+
+    <rule name="AvoidInlineFunctions"
+          language="ecmascript"
+          class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+          message="[BP-02] Evita funciones inline en props para prevenir renders innecesarios">
+        <priority>3</priority>
+        <properties>
+            <property name="xpath">
+                <value><![CDATA[
+                    //JSXAttribute[
+                        @Name != 'key' 
+                        and ./JSXExpressionContainer/ArrowFunctionExpression
+                    ]
                 ]]></value>
             </property>
         </properties>
     </rule>
 
     <!-- ================================= -->
-    <!-- 3. Reglas de Estructura           -->
+    <!-- 3. Estructura de Componentes       -->
     <!-- ================================= -->
-    <rule name="ComponentFileStructure"
-        language="ecmascript"
-        class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
-        message="[STR-01] Archivo debe contener solo un componente principal">
-        <priority>3</priority>
+    <rule name="SingleComponentPerFile"
+          language="ecmascript"
+          class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+          message="[STR-01] Archivo debe contener máximo 1 componente principal (PascalCase)">
+        <priority>2</priority>
         <properties>
             <property name="xpath">
                 <value><![CDATA[
                     //FunctionDeclaration[matches(@Image,'^[A-Z]')][position() > 1]
+                ]]></value>
+            </property>
+        </properties>
+    </rule>
+
+    <rule name="ComponentNaming"
+          language="ecmascript"
+          class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+          message="[STR-02] Los componentes deben usar PascalCase">
+        <priority>3</priority>
+        <properties>
+            <property name="xpath">
+                <value><![CDATA[
+                    //FunctionDeclaration[
+                        ./parent::Program
+                        and not(matches(@Image,'^[A-Z]'))
+                    ]
+                ]]></value>
+            </property>
+        </properties>
+    </rule>
+
+    <!-- ================================= -->
+    <!-- 4. Rendimiento                    -->
+    <!-- ================================= -->
+    <rule name="MissingListKey"
+          language="ecmascript"
+          class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+          message="[PERF-01] Elementos en listas deben tener prop 'key' única">
+        <priority>1</priority>
+        <properties>
+            <property name="xpath">
+                <value><![CDATA[
+                    //JSXElement[
+                        ./parent::JSXExpressionContainer
+                        and not(./JSXOpeningElement/JSXAttribute[@Name='key'])
+                    ]
                 ]]></value>
             </property>
         </properties>
