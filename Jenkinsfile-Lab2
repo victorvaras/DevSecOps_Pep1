@@ -58,7 +58,7 @@ pipeline {
             steps {
                 dir("Backend") {
                     withSonarQubeEnv('SonarQube') {
-                        bat "\"${tool 'sonar-scanner'}\\bin\\sonar-scanner.bat\" -Dsonar.projectKey=DevSecObs-Backend -Dsonar.sources=src -Dsonar.java.binaries=target -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml"
+                        bat "\"${tool 'sonar-scanner'}\\bin\\sonar-scanner.bat\" -Dsonar.projectKey=DevSecObs-Backend-PrestaBanco -Dsonar.sources=src -Dsonar.java.binaries=target -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml"
 
                     }
                 }
@@ -111,7 +111,7 @@ pipeline {
             steps {
                 dir("Frontend") {
                     withSonarQubeEnv('SonarQube') {
-                        bat "\"${tool 'sonar-scanner'}\\bin\\sonar-scanner.bat\" -Dsonar.projectKey=DevSecObs-frontend -Dsonar.sources=src -Dsonar.login=%SONARQUBE_TOKEN%"
+                        bat "\"${tool 'sonar-scanner'}\\bin\\sonar-scanner.bat\" -Dsonar.projectKey=DevSecObs-frontend-PrestaBanco -Dsonar.sources=src -Dsonar.login=%SONARQUBE_TOKEN%"
                     }
                 }
             }
