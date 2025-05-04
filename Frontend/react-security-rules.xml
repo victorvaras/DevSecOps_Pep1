@@ -46,14 +46,14 @@
     <!-- 3. Reglas de Estructura           -->
     <!-- ================================= -->
     <rule name="ComponentFileStructure"
-          language="ecmascript"
-          class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
-          message="[STR-01] Archivo debe contener solo un componente principal">
+        language="ecmascript"
+        class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+        message="[STR-01] Archivo debe contener solo un componente principal">
         <priority>3</priority>
         <properties>
             <property name="xpath">
                 <value><![CDATA[
-                    count(//FunctionDeclaration[matches(@Image,'^[A-Z]')]) > 1
+                    //FunctionDeclaration[matches(@Image,'^[A-Z]')][position() > 1]
                 ]]></value>
             </property>
         </properties>
