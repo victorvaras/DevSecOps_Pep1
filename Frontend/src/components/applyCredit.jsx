@@ -108,7 +108,7 @@ const ApplyCredit = () => {
             <h1>Solicitud de Crédito</h1>
             <form onSubmit={handleSubmit}>
                 <div>
-                    <label>Tipo de Préstamo:</label>
+                    <label>Tipo de Préstamo:
                     <select value={loanType} onChange={ (e) => setLoanType(e.target.value)}>
                         <option value="">Seleccione</option>
                         <option value="1">Primera Vivienda</option>
@@ -116,6 +116,7 @@ const ApplyCredit = () => {
                         <option value="3">Propiedades Comerciales</option>
                         <option value="4">Remodelación</option>
                     </select>
+                    </label>
                 </div>
                 <div>
                     <label>Monto a Solicitar:</label>
