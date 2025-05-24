@@ -57,7 +57,7 @@
 					<rulesets>
 						<ruleset>rulesets/java/quickstart.xml</ruleset>
 					</rulesets>
-					<outputDirectory>F:\DevSecObs_lab1</outputDirectory>
+					<outputDirectory>C:\DevSecObs_lab1</outputDirectory>
 				</configuration>
 				<dependencies>
 					<dependency>
