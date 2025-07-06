@@ -54,31 +54,16 @@ pipeline {
         }
         
         
-        stage("SAST SonarQube backend") {
+        stage("SAST SonarQubes Backend") {
             steps {
-                dir("backend") {
+                dir("Backend") {
                     withSonarQubeEnv('SonarQube') {
-                        // Ejecutar sin detener el pipeline si falla
-                        script {
-                            def status = sh (
-                                script: "\"${tool 'sonar-scanner'}/bin/sonar-scanner\" " +
-                                        "-Dsonar.projectKey=DevSecObs-backend-PrestaBanco " +
-                                        "-Dsonar.sources=src " +
-                                        "-Dsonar.java.binaries=build/classes/java/main " +
-                                        "-Dsonar.coverage.jacoco.xmlReportPaths=build/reports/jacoco/test/jacocoTestReport.xml " +
-                                        "-Dsonar.qualitygate.wait=false", // No espera el quality gate
-                                returnStatus: true
-                            )
-        
-                            if (status != 0) {
-                                echo "⚠ SonarQube analysis failed, but continuing pipeline."
-                            }
-                        }
+                        bat "\"${tool 'sonar-scanner'}\\bin\\sonar-scanner.bat\" -Dsonar.projectKey=DevSecObs-Backend-PrestaBanco -Dsonar.sources=src -Dsonar.java.binaries=target -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml"
+
                     }
                 }
             }
         }
-
 
         
 
